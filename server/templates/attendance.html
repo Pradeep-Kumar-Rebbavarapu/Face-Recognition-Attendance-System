@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=\, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <div>Total Number Of Students = {{total_students}}</div>
+    <div>students Are:</div>
+    {% for i in students %}
+        <div>{{i|slice:-4}}</div>
+    {% endfor %}
+</body>
+</html>
