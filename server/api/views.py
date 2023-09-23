@@ -3,7 +3,6 @@ from .models import *
 from .helpers import *
 import os
 import threading
-import concurrent.futures
 import face_recognition
 import numpy as np
 from rest_framework.generics import *
@@ -13,7 +12,6 @@ from rest_framework.response import Response
 from django.http import JsonResponse
 from .serializers import *
 from .tasks import process_student_encodings
-from .thread import *
 # Create your views here.
 BASE_DIR = settings.BASE_DIR
 def getAttendance(filename,level):
@@ -53,11 +51,46 @@ def getAttendance(filename,level):
     return response
 
 
-def getAttendanceOfAll(filename,photo):
-    present_students = set()
-    group_photo_path = os.path.join(os.path.join(settings.BASE_DIR, 'media'), f"group_photo/{filename}")
-    CreateStudentsThread(100,group_photo_path,present_students,photo).start()
-    
+def getAttendanceOfAll(filename):
+        group_photo_path = os.path.join(os.path.join(settings.BASE_DIR, 'media'), f"group_photo/{filename}")
+        group_photo = face_recognition.load_image_file(group_photo_path)
+        group_face_locations = face_recognition.face_locations(group_photo)
+        group_face_encodings = face_recognition.face_encodings(group_photo, group_face_locations)
+        
+        present_students = set()  # Use a set to avoid duplicates
+        
+        for group_face_encoding in group_face_encodings:
+            closest_student = None
+            min_distance = 1
+            
+            for student in Student.objects.all():
+                encodings = []
+                if student.image1_encodings:
+                    encodings += json.loads(student.image1_encodings)
+                if student.image2_encodings:
+                    encodings += json.loads(student.image2_encodings)
+                
+                if encodings:
+                    distances = face_recognition.face_distance(np.array(encodings), group_face_encoding)
+                    min_distance_index = np.argmin(distances)
+                    
+                    if distances[min_distance_index] < min_distance:
+                        closest_student = student
+                        min_distance = distances[min_distance_index]
+            
+            if closest_student:
+                present_students.add(closest_student.roll_number)  # You can use a unique identifier for the student instead of 'name'
+
+        # Create the response dictionary
+
+        response = {
+            'total_students': len(present_students),
+            'students': list(present_students)
+        }
+
+        return response
+
+
 
 def GroupPhotoData(request):
         if request.method == "POST":
@@ -100,8 +133,13 @@ class GroupPhotoAPI(APIView):
                 course = course
         )
         photo.save()
-        getAttendanceOfAll(file.name,photo)
-        return Response('done')
+        response = getAttendanceOfAll(file.name)
+        photo.total_number_of_students = response['total_students']
+        all_students = Student.objects.filter(roll_number__in=response['students'])
+        print(all_students)
+        photo.students_present.add(*all_students)
+        photo.save()
+        return JsonResponse(response)
         
 
 
@@ -137,38 +175,11 @@ class ProcessEncodings(APIView):
             image2_encodings__isnull=True
         )
 
-        # Define a function to process student encodings
-        def process_student_encodings(student):
-            try:
-                print(f"Processing encodings for student with roll number {student.roll_number}")
-                encodings = self.compute_face_encodings(student.image1)
-                if encodings is not None and len(encodings) != 0:
-                    encodings_json = [enc.tolist() for enc in encodings]
-                    Student.objects.filter(pk=student.pk).update(image1_encodings=json.dumps(encodings_json))
-                encodings = self.compute_face_encodings(student.image2)
-                if encodings is not None and len(encodings) !=0:
-                    encodings_json = [enc.tolist() for enc in encodings]
-                    Student.objects.filter(pk=student.pk).update(image2_encodings=json.dumps(encodings_json))
-                print(f"Completed processing encodings for student with roll number {student.roll_number}")
-            except Exception as e:
-                print(f"Error processing encodings for Student {student.roll_number}: {e}")
-
-        # Create a ThreadPoolExecutor and submit tasks
-        with concurrent.futures.ThreadPoolExecutor() as executor:
-            executor.map(process_student_encodings, students)
+        for student in students:
+            # Trigger the Celery task asynchronously
+            process_student_encodings.delay(student.id)
 
         return Response('Processing encodings started.')
-    
-    def compute_face_encodings(image_field):
-        if image_field:
-            try:
-                image_path = image_field.path
-                image = face_recognition.load_image_file(image_path)
-                encodings = face_recognition.face_encodings(image)
-                return encodings
-            except Exception as e:
-                print(f"Error computing encodings for {image_field}: {e}")
-        return []
 
 
 
