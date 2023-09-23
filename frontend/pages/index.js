@@ -1,194 +1,85 @@
-import Image from "next/image";
-import { Inter } from "next/font/google";
-import { useState } from "react";
+import React, { useState } from "react";
 import axios from "axios";
-const inter = Inter({ subsets: ["latin"] });
-
-export default function Home() {
-	const [id, setid] = useState(1);
-	const [total, settotal] = useState(0);
-	const [students, setstudents] = useState([]);
-	const [file, setfile] = useState(null);
-	console.log("students", students);
-	console.log("total", total);
-	const [btn1, setbtn1] = useState(false);
-	const [btn2, setbtn2] = useState(true);
-	const [btn3, setbtn3] = useState(true);
-	const [btn4, setbtn4] = useState(true);
-	const [loading,setloading] = useState(false)
+import Image from "next/image";
+import homepage1 from '../public/images/homepage1.jpeg'
+export default function index() {
+	const [image, setimage] = useState(null);
+	const [course, setcourse] = useState('CS 203');
+	const [date, setdate] = useState(null);
 	return (
-		<main
-			className={`flex justify-center items-center flex-col `}
-		>
-			<input
-				id="file"
-				name="file"
-				type="file"
-				className="my-10 border-2"
-				onChange={(e) => {
-					setbtn1(false)
-					setbtn2(true)
-					setbtn3(true)
-					setbtn4(true)
-					setstudents([])
-					settotal(0)
-					setid(1)
-					document.querySelectorAll('button').forEach((e)=>{
-						e.innerHTML = "Send"
-					})
-					setfile(e.target.files);
-				}}
-			/>
-			<div className="lg:flex">
-				<div className="mx-5">
-					<button
-						id="1"
-						disabled={btn1 || !file}
-						className="border-2 border-white p-2 mx-2 my-2 lg:my-0"
-						onClick={() => {
-							let formData = new FormData();
-							formData.append("id", 1);
-							formData.append("file", file[0]);
-							sendPhoto(
-								students,
-								total,
-								setstudents,
-								settotal,
-								1,
-								file,
-								setid,
-								formData,
-								setbtn1,
-								setbtn2
-							);
-						}}
-					>
-						Send
-					</button>
-					<span>Roll Number 1 - 20</span>
-				</div>
-				<div className="mx-5">
-					<button
-						id="2"
-						disabled={btn2 || !file}
-						className="border-2 border-white p-2 mx-2 my-2 lg:my-0"
-						onClick={() => {
-							let formData = new FormData();
-							formData.append("id", 2);
-							formData.append("file", file[0]);
-							sendPhoto(
-								students,
-								total,
-								setstudents,
-								settotal,
-								2,
-								file,
-								setid,
-								formData,
-								setbtn2,
-								setbtn3
-							);
-						}}
-					>
-						Send
-					</button>
-					<span>Roll Number 20 - 40</span>
-				</div>
-				<div className="mx-5">
-					<button
-						id="3"
-						disabled={btn3 || !file}
-						className="border-2 border-white p-2 mx-2 my-2 lg:my-0"
-						onClick={() => {
-							let formData = new FormData();
-							formData.append("id", 3);
-							formData.append("file", file[0]);
-							sendPhoto(
-								students,
-								total,
-								setstudents,
-								settotal,
-								3,
-								file,
-								setid,
-								formData,
-								setbtn3,
-								setbtn4
-							);
-						}}
-					>
-						Send
-					</button>
-					<span>Roll Number 40 - 60</span>
-				</div>
-				<div className="mx-5">
-					<button
-						id="4"
-						disabled={btn4 || !file}
-						className="border-2 border-white p-2 mx-2 my-2 lg:my-0"
-						onClick={() => {
-							let formData = new FormData();
-							formData.append("id", 4);
-							formData.append("file", file[0]);
-							sendPhoto(
-								students,
-								total,
-								setstudents,
-								settotal,
-								4,
-								file,
-								setid,
-								formData,
-								setbtn4,
-								() => { }
-							);
-						}}
-					>
-						Send
-					</button>
-					<span>Roll Number 60+</span>
-				</div>
-				
+		<div className="lg:grid lg:grid-cols-[80px_auto_auto]  h-full">
+			<div className="hidden lg:block"></div>
+			<div className="w-full h-full lg:py-10 pt-20 lg:my-auto flex justify-center items-center">
+				<Image src={homepage1} placeholder="blur" className="w-[300px] sm:w-[500px]  lg:-skew-x-12 lg:translate-x-10" />
 			</div>
-			<div>
-				{students.length!==0 && total!=0 && (
-					<div className="text-center my-10 text-lg lg:text-3xl font-bold">Students Present In The Photo : {total}</div>
-				)}
-					<div className="grid grid-cols-2 mx-2 my-10 sm:grid-cols-5 xl:grid-cols-10">
-					{students.map((ele) => {
-						return <div className="border-2 border-white p-2 mx-2 my-2" key={ele}>{ele}</div>;
-					})}
+			<div className="lg:hidden"></div>
+			<div className="flex flex-col justify-center items-center w-full h-full  text-white">
+				<div className=" px-5 py-20 mx-auto flex">
+					<div className="max-w-[400px] bg-white rounded-lg p-8 flex flex-col md:ml-auto  mt-10 md:mt-0 relative z-10 shadow-md">
+						<h2 className="text-gray-900 text-lg mb-1 font-medium title-font">Collect Attendance</h2>
+						<p className="leading-relaxed mb-5 text-gray-600">Submit the class photo along with the course name and the date of the course taken.</p>
+						<div className="relative mb-4">
+							<label for="course" className="leading-7 text-sm text-gray-600">Course</label>
+							<select type="select" id="course" name="course" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" required onChange={(e)=>{
+								console.log(e)
+								setcourse(e.target.value)
+							}}>
+								<option>CS 203</option>
+								<option>MA 205</option>
+								<option>CS 207</option>
+								<option>CS 201</option>
+							</select>
+						</div>
+						<div className="relative mb-4">
+							<label for="date" className="leading-7 text-sm text-gray-600">Date of the class Taken</label>
+							<input onChange={(e)=>{
+								setdate(e.target.value)
+							}} id="date" name="date" type="date" placeholder="Date of the Class Taken" className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out" required />
+						</div>
+						<div className="relative mb-4">
+							<label for="file" className="leading-7 text-sm text-gray-600">Class Photo</label>
+							<input
+								type="file"
+								onChange={(e) => {
+									setimage(e.target.files);
+								}}
+								className="w-full bg-white rounded border border-gray-300 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+								name="file"
+								id="file"
+								required
+							/>
+						</div>
+						<button
+						disabled={!image && !course && !date}
+							className="text-white bg-indigo-500 border-0 py-2 px-6 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+							onClick={() => {
+								let formData = new FormData();
+								formData.append("file", image[0]);
+								formData.append('date',date)
+								formData.append('course',course)
+								sendPhoto(formData);
+							}}
+						>
+							Send
+						</button>
+
+						<p className="text-xs text-gray-500 mt-3">MAKE SURE EVERY PERSON IN THE PHOTO IS CLEARLY VISIBLE ELSE HE/SHE MAY NOT BE CONSIDERED . YOU CAN ALSO DIVIDE THE PICTURE INTO GROUPS OF STUDENTS.</p>
 					</div>
 				</div>
-		</main>
+				{/* 
+				 */}
+			</div>
+		</div>
 	);
 }
 
-const sendPhoto = (
-	students,
-	total,
-	setstudents,
-	settotal,
-	id,
-	file,
-	setid,
-	formData,
-	previous_btn,
-	next_btn,
-) => {
-	document.getElementById(id).innerHTML = "loading..."
+const sendPhoto = (formData) => {
 	axios
-		.post("http://20.212.192.239/api/v1/GroupPhotoAPI/", formData)
+		.post("http://127.0.0.1:8000/api/v1/GroupPhotoAPI/", formData)
 		.then((response) => {
 			console.log(response);
-			setstudents((oldstudents) =>
-				oldstudents.concat(response.data.students).sort()
-			);
-			settotal((total) => total + response.data.total_students);
-			document.getElementById(id).innerHTML = "Done"
-			previous_btn(true);
-			next_btn(false);
-		}).catch((err)=>{
-			document.getElementById(id).innerHTML = "Error"
 		})
+		.catch((err) => {
+			alert(err.toString());
+		});
 };

@@ -18,9 +18,14 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
-from .views import GroupPhotoAPI
+from .views import GroupPhotoAPI,UploadDetails,ProcessEncodings,getCourseAttendance,GetCoursesByDate,GetEachCourseByDate
 
 urlpatterns = [
     path('',views.GroupPhotoData),
     path('api/v1/GroupPhotoAPI/',GroupPhotoAPI.as_view()),
+    path('api/v1/UploadDetails/',UploadDetails.as_view()),
+    path('api/v1/ProcessEncodings/',ProcessEncodings.as_view()),
+    path('api/v1/getCourseAttendance/<str:pk>',getCourseAttendance.as_view()),
+    path('api/v1/GetCoursesByDate/<str:pk>',GetCoursesByDate.as_view()),
+    path('api/v1/GetEachCourseByDate/<str:course>/<str:date>',GetEachCourseByDate.as_view()),
 ] 
