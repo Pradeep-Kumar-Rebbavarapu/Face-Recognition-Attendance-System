@@ -1441,69 +1441,6 @@
     }
   },
   {
-    "model": "contenttypes.contenttype",
-    "pk": 1,
-    "fields": { "app_label": "admin", "model": "logentry" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 2,
-    "fields": { "app_label": "auth", "model": "permission" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 3,
-    "fields": { "app_label": "auth", "model": "group" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 4,
-    "fields": { "app_label": "auth", "model": "user" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 5,
-    "fields": { "app_label": "contenttypes", "model": "contenttype" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 6,
-    "fields": { "app_label": "sessions", "model": "session" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 7,
-    "fields": { "app_label": "api", "model": "groupphoto" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 8,
-    "fields": { "app_label": "api", "model": "student" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 9,
-    "fields": { "app_label": "django_celery_results", "model": "taskresult" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 10,
-    "fields": { "app_label": "django_celery_results", "model": "chordcounter" }
-  },
-  {
-    "model": "contenttypes.contenttype",
-    "pk": 11,
-    "fields": { "app_label": "django_celery_results", "model": "groupresult" }
-  },
-  {
-    "model": "sessions.session",
-    "pk": "py1gif7mqzwps6p6hw47b3ebv0003bl9",
-    "fields": {
-      "session_data": ".eJxVjLEOgzAMRP8lcxXFRCbQsXu_IbIdp9BWQSIwof57QWJox7v37jYTaV2GuFad45jM1YC5_HZM8tJygPSk8pisTGWZR7aHYk9a7X1K-r6d7t_BQHXY111QDArSEGLqkHpE5wJA30JDe2qzYJDec2bPrfNZPQIAJhbHuVPz-QLIbjee:1qprF7:G7feCenwtTsv_YM3X8uo4dRXtrXdqyuGA1N-G7JIc4Y",
-      "expire_date": "2023-10-23T14:28:21.624Z"
-    }
-  },
-  {
     "model": "api.student",
     "pk": 1,
     "fields": {

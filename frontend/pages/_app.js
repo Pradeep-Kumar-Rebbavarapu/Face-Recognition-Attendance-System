@@ -9,6 +9,9 @@ import {
 	QueryClientProvider,
   } from '@tanstack/react-query'
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools'
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function App({ Component, pageProps }) {
 		const queryClient = new QueryClient()
@@ -42,16 +45,15 @@ export default function App({ Component, pageProps }) {
 		<div >
 			 <QueryClientProvider client={queryClient} >
 			<div className='relative'>
-				<div className='transition-all fade-in-out'>
-					<div className='text-center  p-5 uppercase font-bold md:text-2xl text-xl lg:text-3xl  text-white bg-gradient-to-r from-violet-500 z-[0]  to-indigo-500 '>Face Recognition Attendance System</div>
-					<Navbar/>
-					<button ref={ref} id="navbtn" className='w-[100px] h-[50px] bg-gradient-to-r  to-indigo-500 lg:hidden from-violet-500 top-[100px]  absolute transition-all fade-in-out '>
+				<div className='transition-all fade-in-out '>
 					
-					</button>
+					<Navbar/>
+					
+					
 				</div>
 				
-				<div className='lg:grid lg:grid-cols-[80px_auto]'>
-				<div className="hidden lg:block"></div>
+				<div className='pt-32 lg:pt-20'>
+				<ToastContainer className={"!z-[10000000] invert"}  />
 				<Component {...pageProps} />
 				</div>
 			</div>
