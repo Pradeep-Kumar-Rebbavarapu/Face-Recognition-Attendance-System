@@ -4,7 +4,7 @@ import { QueryClient, useQuery, dehydrate } from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { SheetsDirective, SheetDirective, RangesDirective, RangeDirective, SpreadsheetComponent } from '@syncfusion/ej2-react-spreadsheet';
+import { NextSeo } from 'next-seo';
 export default function EachCourse() {
     const router = useRouter()
     const DateAttendance = useQuery(['EachDateAttendance'], () => {
@@ -13,6 +13,10 @@ export default function EachCourse() {
     console.log(DateAttendance)
     return (
         <div className='h-full'>
+            <NextSeo
+				title="IIT INDORE - COURSES"
+				description="IIT INDORE'S ATTENDANCE SYSTEM"
+			/>
             <div
                 className={`${DateAttendance.isFetching ||
                     DateAttendance.isLoading ||

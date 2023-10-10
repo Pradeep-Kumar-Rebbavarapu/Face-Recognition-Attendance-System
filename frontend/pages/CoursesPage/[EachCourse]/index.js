@@ -4,7 +4,7 @@ import { QueryClient, useQuery,dehydrate } from '@tanstack/react-query'
 import axios from 'axios'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
-
+import { NextSeo } from 'next-seo';
 export default function EachCourse() {
     const router = useRouter()
     const Attendance = useQuery(['Attendance'],()=>{
@@ -14,6 +14,10 @@ export default function EachCourse() {
     
   return (
     <div className='h-full'>
+       <NextSeo
+				title="IIT INDORE - COURSES"
+				description="IIT INDORE'S ATTENDANCE SYSTEM"
+			/>
         <div
           className={`${Attendance.isFetching ||
             Attendance.isLoading ||

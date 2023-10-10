@@ -5,21 +5,25 @@ import homepage1 from '../public/images/homepage1.jpeg'
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import Model from "@/components/Model";
-
+import { NextSeo } from 'next-seo';
 export default function Home() {
 	const [image, setimage] = useState(null);
 	const [course, setcourse] = useState('CS 203');
 	const [date, setdate] = useState(null);
 	return (
 		<div className="  h-full backdrop-blur-2xl  overflow-hidden">
-			
+			<NextSeo
+				title="IIT INDORE - ATTENDANCE"
+				description="IIT INDORE'S ATTENDANCE SYSTEM"
+			/>
+
 			<div className="w-full h-full backdrop-blur-2xl   lg:my-auto flex justify-center items-center absolute z-[1] overflow-hidden">
 				<Model />
 			</div>
 			<div className="  grid lg:grid-cols-2  justify-center">
-			<div className="!z-[1]  w-[400px] lg:w-[600px] mx-auto h-fit my-auto">
+				<div className="!z-[1]  w-[400px] lg:w-[600px] mx-auto h-fit my-auto">
 					<div className="md:text-5xl text-3xl backdrop-blur-3xl rounded-lg font-bold  my-20  text-white p-20  text-center w-full">Face Recognition Attendance System</div>
-			</div>
+				</div>
 				<div className="flex flex-col justify-center items-center w-full h-full  text-white">
 					<div className=" px-5 lg:py-20 mx-auto flex">
 						<div className="max-w-[400px] sm:max-w-[600px] bg-white rounded-lg p-8 flex flex-col md:ml-auto  mt-10 md:mt-0 relative z-10 shadow-md">

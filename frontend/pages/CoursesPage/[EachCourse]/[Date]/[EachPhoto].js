@@ -4,6 +4,7 @@ import {useQuery,QueryClient,dehydrate} from '@tanstack/react-query'
 import axios from 'axios'
 import EachPhotoComp from '@/components/EachPhotoComp'
 import StudentsPresent from '@/components/StudentsPresent'
+import { NextSeo } from 'next-seo';
 export default function EachPhoto() {
     const router = useRouter()
     const EachPhotoDetails = useQuery(['EachPhotoDetails'], () => {
@@ -12,6 +13,10 @@ export default function EachPhoto() {
     console.log(EachPhotoDetails.data)
     return (
         <div className='h-full'>
+            <NextSeo
+				title="IIT INDORE - COURSES"
+				description="IIT INDORE'S ATTENDANCE SYSTEM"
+			/>
             <div
                 className={`${EachPhotoDetails.isFetching ||
                     EachPhotoDetails.isLoading ||
