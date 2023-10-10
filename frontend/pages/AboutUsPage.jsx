@@ -2,7 +2,7 @@ import React from 'react'
 import { NextSeo } from 'next-seo';
 import pradeep from '../public/images/pradeep.jpg'
 import akhilesh from '../public/images/akhilesh.jpeg'
-import vijit from '../public/images/vijit.jpeg'
+import vijit from '../public/images/vijit.jpg'
 import Image from 'next/image';
 export default function AboutUsPage() {
     return (
