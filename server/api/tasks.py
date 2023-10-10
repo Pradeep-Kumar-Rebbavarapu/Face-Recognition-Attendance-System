@@ -44,3 +44,7 @@ def test_func(self,filename,id):
         photo.students_present.add(*all_students)
         photo.save()
         return 'Done'
+
+
+
+     

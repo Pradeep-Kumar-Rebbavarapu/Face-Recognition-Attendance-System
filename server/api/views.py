@@ -11,8 +11,12 @@ from rest_framework.views import *
 from rest_framework.response import Response
 from django.http import JsonResponse
 from .serializers import *
-
+import pandas as pd
 from .tasks import test_func
+from io import BytesIO
+from django.http import FileResponse
+import csv
+from django.http import HttpResponse
 # Create your views here.
 BASE_DIR = settings.BASE_DIR
 
@@ -71,7 +75,8 @@ class GroupPhotoAPI(APIView):
                 timestamp=gettime(),
                 total_number_of_students=0,
                 date = date,
-                course = course
+                course = course,
+                status="In Process"
         )
         photo.save()
         test_func.delay(file.name,photo.id)
@@ -167,4 +172,81 @@ class GetEachCourseByDate(APIView):
 
         
         
+class GetEachPhotoDetails(APIView):
+    def get(self, request, id):
+        try:
+            photo = GroupPhoto.objects.get(id=id)
+            serializer = GroupPhotoSerializer(photo,context={'request': request})
+            students_present = serializer.data.get('students_present', [])
+            students_list = []
+
+            for student_id in students_present:
+                student = Student.objects.get(id=student_id)
+                students_list.append({
+                    "roll_number": student.roll_number,
+                    "name": student.name,
+                    "course": student.course,
+                    "branch": student.branch,
+                    "year": student.year,
+                })
+
+            response_data = {
+                "image": serializer.data.get('image', ''),
+                "students": students_list,
+                "course_taken_on": serializer.data.get('date', ''),
+                "total_students": serializer.data.get('total_number_of_students', ''),
+                "date_of_validation": serializer.data.get('datestamp', ''),
+                "time_of_validation": serializer.data.get('timestamp', ''),
+                "course": serializer.data.get('course', ''),
+            }
+
+            return JsonResponse(response_data, status=status.HTTP_200_OK)
+
+        except GroupPhoto.DoesNotExist:
+            return Response('Photo Not Found', status=status.HTTP_404_NOT_FOUND)
         
+
+class DownloadExcel(APIView):
+    def post(self, request):
+        data = request.data
+        course = data['course']
+        date = data['date']
+        __all__photos__of__the__course__and__date__ = GroupPhoto.objects.filter(date=date).filter(course=course)
+        __all__students__of__the__class__ = set()
+        for photo in __all__photos__of__the__course__and__date__:
+            students_present = photo.students_present.all()
+            __all__students__of__the__class__.update(students_present)
+        test = []
+        for i in __all__students__of__the__class__:
+            test.append({
+                "student_id": i.id,
+                "roll_number": i.roll_number,
+                "name": i.name,
+                "course": i.course,
+                "branch": i.branch,
+                "year": i.year,
+            })
+
+        # Create a response object with the appropriate content type for CSV
+        response = HttpResponse(content_type='text/csv')
+        file_name = f"{course}__{date}.csv"
+
+        # Set the Content-Disposition header to suggest the filename for download
+        response['Content-Disposition'] = f'attachment; filename="{file_name}"'
+
+        # Create a CSV writer using the response as the output file
+        csv_writer = csv.writer(response)
+
+        # Write the header row
+        header_row = ["Student ID", "Roll Number", "Name", "Course", "Branch", "Year"]
+        csv_writer.writerow(header_row)
+
+        # Write data rows
+        for row in test:
+            data_row = [row["student_id"], row["roll_number"], row["name"], row["course"], row["branch"], row["year"]]
+            csv_writer.writerow(data_row)
+
+        return response
+
+
+

@@ -87,6 +87,11 @@ class Student(models.Model):
             return []
     
 class GroupPhoto(models.Model):
+    status_choices = {
+        ('In Process','In Process'),
+        ('Done','Done'),
+        ('Error','Error')
+    }
     image = models.ImageField(upload_to=upload_group_photo)
     datestamp = models.CharField(max_length=225,default=getdate,null=True,blank=True)
     timestamp = models.CharField(max_length=225,default=gettime,null=True,blank=True)
@@ -94,6 +99,7 @@ class GroupPhoto(models.Model):
     course = models.CharField(max_length=225,default=None,null=True,blank=True)
     date = models.CharField(max_length=225,default=None,null=True,blank=True)
     students_present = models.ManyToManyField(Student)
+    status = models.CharField(max_length=20,choices=status_choices,null=True,blank=True,default=None)
     @property
     def image_preview(self):
         if self.image:

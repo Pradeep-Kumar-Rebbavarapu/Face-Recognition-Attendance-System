@@ -147,3 +147,5 @@ CELERY_TASK_SERIALIZER ="json"
 CELERY_TIMEZOND = "Asia/Kolkata"
 
 CELERY_RESULT_BACKEND= 'django-db'
+
+DATE_FORMAT = 'd-m-Y'
