@@ -88,7 +88,7 @@ export default function EachCourse() {
                                         })
                                 }}>Download Attendance</button>
                             </form>
-                            <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 pb-20 ">
+                            <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 py-20 ">
 
                                 {DateAttendance?.data?.data?.map((ele, index) => {
                                     return (

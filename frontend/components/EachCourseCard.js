@@ -15,6 +15,7 @@ export default function EachCourseCard({ele,course,date}) {
                     <p className="excerpt">Total Students Present : {ele.total_number_of_students}</p>
                     <p className="excerpt">Course Taken On : {ele.date}</p>
                     <p className="excerpt">Computation Done On : <p>{ele.datestamp} - {ele.timestamp}</p></p>
+                    <p className="excerpt">Status : <span>{ele.status}</span></p>
                     <Link href={`/CoursesPage/${course}/${date}/${ele.id}`}>
                     <button  className="card-int__button">Show</button>
                     </Link>
