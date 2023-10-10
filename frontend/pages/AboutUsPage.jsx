@@ -22,7 +22,8 @@ export default function AboutUsPage() {
                             <div className="p-4 mx-auto max-w-[800px] mb-10">
                                 <div className="h-full flex lg:flex-col flex-col items-center  justify-center text-center sm:text-center">
                                     <div className='flex w-full justify-center '>
-                                    <Image placeholder='blur' alt="team" className="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 invert mb-4 mx-auto translate-x-[20px]" src={pradeep}/></div>
+                                    <Image placeholder='blur' alt="team" className="flex-shrink-0 rounded-lg w-48 h-48 object-cover object-center sm:mb-0 invert mb-4 mx-auto translate-x-[5px]
+                                    md:translate-x-[20px] lg:translate-x-[20px]" src={pradeep}/></div>
                                         <div className="flex-grow sm:pl-8">
                                             <h2 className="title-font font-medium text-lg text-gray-900 mt-5">Pradeep Kumar Rebbavarapu</h2>
                                             <h3 className="text-gray-500 mb-3">IIT INDORE</h3>

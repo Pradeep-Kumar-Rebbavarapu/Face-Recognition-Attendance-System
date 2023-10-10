@@ -15,7 +15,7 @@ export default function Navbar() {
           <Link href="/" className="mr-5 hover:text-black hover:font-bold font-semibold hover:scale-105 transition-all fade-in-out ">Home</Link>
           <Link href="/CoursesPage" className="mr-5 hover:text-black hover:font-bold font-semibold hover:scale-105 transition-all fade-in-out ">Courses</Link>
           <Link href="/ContactUsPage" className="mr-5 hover:text-black hover:font-bold font-semibold hover:scale-105 transition-all fade-in-out ">Contact Us</Link>
-          <Link href="/AboutUsPage" className="mr-5 hover:text-black hover:font-bold font-semibold hover:scale-105 transition-all fade-in-out ">About Us</Link>
+          <Link href="/AboutUsPage" className=" hover:text-black hover:font-bold font-semibold hover:scale-105 transition-all fade-in-out ">About Us</Link>
         </nav>
       </div>
     </header>
