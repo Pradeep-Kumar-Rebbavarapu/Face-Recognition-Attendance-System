@@ -1,47 +1,28 @@
 from celery import shared_task
-import face_recognition
-import numpy as np
 from django.conf import settings
 import os
 from .models import Student,GroupPhoto
-import json
+from .mlmodel import Attendance
+
+# docker run  --publish=6379:6379 redis
 @shared_task(bind=True)
 def test_func(self,filename,id):
-        group_photo_path = os.path.join(os.path.join(settings.BASE_DIR, 'media'), f"group_photo/{filename}")
-        group_photo = face_recognition.load_image_file(group_photo_path)
-        group_face_locations = face_recognition.face_locations(group_photo)
-        group_face_encodings = face_recognition.face_encodings(group_photo, group_face_locations)
-        
-        present_students = set()  # Use a set to avoid duplicates
-        
-        for group_face_encoding in group_face_encodings:
-            closest_student = None
-            min_distance = 0.6
-            
-            for student in Student.objects.all():
-                encodings = []
-                if student.image1_encodings:
-                    encodings += json.loads(student.image1_encodings)
-                if student.image2_encodings:
-                    encodings += json.loads(student.image2_encodings)
-                
-                if encodings:
-                    distances = face_recognition.face_distance(np.array(encodings), group_face_encoding)
-                    min_distance_index = np.argmin(distances)
-                    
-                    if distances[min_distance_index] < min_distance:
-                        closest_student = student
-                        min_distance = distances[min_distance_index]
-            
-            if closest_student:
-                present_students.add(closest_student.roll_number)  # You can use a unique identifier for the student instead of 'name'
-
-        # Create the response dictionary
         photo = GroupPhoto.objects.get(id=id)
-        photo.total_number_of_students = len(present_students)
-        all_students = Student.objects.filter(roll_number__in=list(present_students))
-        print(all_students)
+        group_photo_path = os.path.join(os.path.join(settings.BASE_DIR, 'media'),photo.image.name)
+        attendance = Attendance(group_photo_path)
+        identified_people = attendance.__identify__person__(group_photo_path)
+        print(identified_people)
+        total_students = attendance.__get__total__people__()
+        unidentified_people = attendance.__get__unidentified__people__()
+        # i have an array of identified people now add them to the database , photo object have a many to many field with student
+        all_students = Student.objects.filter(roll_number__in=identified_people)
         photo.students_present.add(*all_students)
+        photo.total_number_of_students_identified = total_students
+        photo.total_number_of_students_present_in_the_photo = len(identified_people)
+        photo.no_of_unidentified_people = unidentified_people
+        photo.accuracy = attendance.__get__accuracy__()
+        photo.total_number_of_students = len(identified_people) + attendance.unidentified_people
+        photo.status = 'Done'
         photo.save()
         return 'Done'
 

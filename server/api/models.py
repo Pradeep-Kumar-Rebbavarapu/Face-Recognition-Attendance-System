@@ -1,12 +1,7 @@
 from django.db import models
 from .helpers import *
-from django.contrib.postgres.fields import ArrayField
 from django.utils.html import mark_safe
-import face_recognition
-import numpy as np
-import json
-from django.dispatch import receiver
-from django.db.models.signals import post_save
+
 
 
 
@@ -14,7 +9,9 @@ from django.db.models.signals import post_save
 def upload_student_image(instance,filename):
     return f'student_images/{filename}'
 def upload_group_photo(instance,filename):
-    return f'group_photo/{filename}'
+    return f'group_photo/normal/{filename}'
+def upload_boxed_photo(instance,filename):
+    return f'group_photo/boxed/{filename}'
     
 
 
@@ -34,8 +31,6 @@ class Student(models.Model):
     }
     image1 = models.ImageField(null=True,blank=True,default=None,upload_to=upload_student_image)
     image2 = models.ImageField(null=True,blank=True,default=None,upload_to=upload_student_image)
-    image1_encodings = models.JSONField(null=True, blank=True)
-    image2_encodings = models.JSONField(null=True, blank=True)
     roll_number = models.CharField(null=True,blank=True,default=None,max_length=225)
     name = models.CharField(max_length=225,blank=True,null=True,default=None)
     year = models.IntegerField(null = True,blank = True,default=None)
@@ -58,34 +53,6 @@ class Student(models.Model):
             )
         return ""
     
-    def save(self, *args, **kwargs):
-        super().save(*args, **kwargs)  # Save the object
-
-        if self.image1:
-            image_path = self.image1.path
-            encodings = self.compute_face_encodings(image_path)
-            if encodings is not None:
-                encodings_json = [enc.tolist() for enc in encodings]
-                self.image1_encodings = json.dumps(encodings_json)
-
-        if self.image2:
-            image_path = self.image2.path
-            encodings = self.compute_face_encodings(image_path)
-            if encodings is not None:
-                encodings_json = [enc.tolist() for enc in encodings]
-                self.image2_encodings = json.dumps(encodings_json)
-
-        super().save(update_fields=['image1_encodings', 'image2_encodings'])
-
-    def compute_face_encodings(self, image_path):
-        try:
-            image = face_recognition.load_image_file(image_path)
-            encodings = face_recognition.face_encodings(image)
-            return encodings
-        except Exception as e:
-            print(f"Error computing encodings for {image_path}: {e}")
-            return []
-    
 class GroupPhoto(models.Model):
     status_choices = {
         ('In Process','In Process'),
@@ -93,13 +60,17 @@ class GroupPhoto(models.Model):
         ('Error','Error')
     }
     image = models.ImageField(upload_to=upload_group_photo)
+    identified_image = models.ImageField(upload_to=upload_boxed_photo)
     datestamp = models.CharField(max_length=225,default=getdate,null=True,blank=True)
     timestamp = models.CharField(max_length=225,default=gettime,null=True,blank=True)
-    total_number_of_students = models.IntegerField(default=0,null=True,blank=True)
+    total_number_of_students_identified = models.IntegerField(default=0,null=True,blank=True)
+    total_number_of_students_present_in_the_photo = models.IntegerField(default=0,null=True,blank=True)
     course = models.CharField(max_length=225,default=None,null=True,blank=True)
     date = models.CharField(max_length=225,default=None,null=True,blank=True)
     students_present = models.ManyToManyField(Student)
     status = models.CharField(max_length=20,choices=status_choices,null=True,blank=True,default=None)
+    no_of_unidentified_people = models.IntegerField(null=True,blank=True,default=None)
+    accuracy = models.CharField(max_length=10,null=True,blank=True,default=None)
     @property
     def image_preview(self):
         if self.image:

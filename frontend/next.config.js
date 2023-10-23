@@ -7,7 +7,8 @@ const withPWA = require('next-pwa')({
 const nextConfig = {
   reactStrictMode: true,
   images: {
-    domains: ['www.pradeeps-video-conferencing.store'],
+    domains: ['www.pradeeps-video-conferencing.store','127.0.0.1'],
+  
   }
 }
 

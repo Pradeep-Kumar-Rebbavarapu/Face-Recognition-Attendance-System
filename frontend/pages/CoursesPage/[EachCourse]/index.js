@@ -75,7 +75,7 @@ export default function EachCourse() {
 }
 
 const fetchCourseAttendance = (course) =>{
-    return axios.get(`https://www.pradeeps-video-conferencing.store/api/v1/GetCoursesByDate/${course}`).then((response)=>{
+    return axios.get(`http://127.0.0.1:8000/api/v1/GetCoursesByDate/${course}`).then((response)=>{
       console.log(response.data)
         return response.data
     }).catch((err)=>{

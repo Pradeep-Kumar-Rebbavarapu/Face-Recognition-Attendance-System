@@ -1,65 +1,20 @@
-from django.shortcuts import render,redirect
+
 from .models import *
 from .helpers import *
 import os
-import threading
-import face_recognition
-import numpy as np
 from rest_framework.generics import *
 from django.conf import settings
 from rest_framework.views import *
 from rest_framework.response import Response
 from django.http import JsonResponse
 from .serializers import *
-import pandas as pd
 from .tasks import test_func
-from io import BytesIO
-from django.http import FileResponse
 import csv
 from django.http import HttpResponse
+import boto3
 # Create your views here.
 BASE_DIR = settings.BASE_DIR
-
-
-def getAttendanceOfAll(filename):
-        group_photo_path = os.path.join(os.path.join(settings.BASE_DIR, 'media'), f"group_photo/{filename}")
-        group_photo = face_recognition.load_image_file(group_photo_path)
-        group_face_locations = face_recognition.face_locations(group_photo)
-        group_face_encodings = face_recognition.face_encodings(group_photo, group_face_locations)
-        
-        present_students = set()  # Use a set to avoid duplicates
-        
-        for group_face_encoding in group_face_encodings:
-            closest_student = None
-            min_distance = 0.6
-            
-            for student in Student.objects.all():
-                encodings = []
-                if student.image1_encodings:
-                    encodings += json.loads(student.image1_encodings)
-                if student.image2_encodings:
-                    encodings += json.loads(student.image2_encodings)
-                
-                if encodings:
-                    distances = face_recognition.face_distance(np.array(encodings), group_face_encoding)
-                    min_distance_index = np.argmin(distances)
-                    
-                    if distances[min_distance_index] < min_distance:
-                        closest_student = student
-                        min_distance = distances[min_distance_index]
-            
-            if closest_student:
-                present_students.add(closest_student.roll_number)  # You can use a unique identifier for the student instead of 'name'
-
-        # Create the response dictionary
-
-        response = {
-            'total_students': len(present_students),
-            'students': list(present_students)
-        }
-
-        return response
-
+s3 = boto3.resource('s3')
 
 class GroupPhotoAPI(APIView):
     def post(self,request):
@@ -73,7 +28,8 @@ class GroupPhotoAPI(APIView):
                 image=file,
                 datestamp=getdate(),
                 timestamp=gettime(),
-                total_number_of_students=0,
+                total_number_of_students_identified=0,
+                total_number_of_students_present_in_the_photo=0,
                 date = date,
                 course = course,
                 status="In Process"
@@ -82,29 +38,40 @@ class GroupPhotoAPI(APIView):
         test_func.delay(file.name,photo.id)
         return Response({'message':'Done'})
         
-
+def send_photo_s3_bucket(photo1,photo2,roll_number1,roll_number2):
+    object1 = s3.Object('all-students-facerecog-iiti','index/'+ roll_number1)
+    ret1 = object1.put(Body=photo1,Metadata={'FullName':roll_number1[0:11]})
+    object2 = s3.Object('all-students-facerecog-iiti','index/'+ roll_number2)
+    ret2 = object2.put(Body=photo2,Metadata={'FullName':roll_number2[0:11]})
+    return True
 
 class UploadDetails(APIView):
-    def get(self,request):
-        path = os.path.join(os.path.join(BASE_DIR,'static'),f'student_images')
-        folder = os.listdir(path)
-
-        new_folder = []
-        for i in folder:
-            new_folder.append(i[0:9])
-        new_folder = list(set(new_folder))
-        print(len(new_folder))
-        for i in new_folder:
+    def post(self,request):
+        try:
+            data = request.data
+            students_photo1 = request.FILES['photo1']
+            students_photo2 = request.FILES['photo2']
+            student_name = data['name']
+            roll_number = data['roll_number']
+            course = data['course']
+            branch = data['branch']
+            year = data['year']
+            # save the photo in database before saving it to s3 bucket
             student = Student.objects.create(
-                roll_number = i,
-                branch="CSE",
-                year=2,
-                course="BTECH"
+                name = student_name,
+                roll_number = roll_number,
+                course = course,
+                branch = branch,
+                year = year,
+                image1 = students_photo1,
+                image2 = students_photo2
             )
             student.save()
-            
-
-        return Response('done')
+            send_photo_s3_bucket(student.image1,student.image2,students_photo1.name,students_photo2.name)
+            return Response('done',status=status.HTTP_200_OK)
+        except Exception as e:
+            print(e)
+            return Response('errpr',status=status.HTTP_400_BAD_REQUEST)
     
 
 
@@ -140,7 +107,7 @@ class GetCoursesByDate(APIView):
                 arr.append(i.date)
                 dates.append({
                     "dates":i.date,
-                    "total_students":i.total_number_of_students,
+                    "total_students":i.total_number_of_students_identified,
                     "course":i.course
                 })
         return JsonResponse({"data":dates},status = status.HTTP_200_OK)

@@ -72,7 +72,7 @@ export default function EachPhoto() {
 }
 
 const fetchEachPhotoDetails = async (id) => {
-    return axios.get(`https://www.pradeeps-video-conferencing.store/api/v1/GetEachPhotoDetails/${id}`).then((response) => {
+    return axios.get(`http://127.0.0.1:8000/api/v1/GetEachPhotoDetails/${id}`).then((response) => {
         return response.data
     })
 }

@@ -56,7 +56,7 @@ export default function EachCourse() {
                         <div className=''>
                             <form onSubmit={(e) => e.preventDefault()} className='w-full  flex justify-center flex-col '>
                                 <button type="button" className=' p-3 mx-auto mt-20 bg-green-800 rounded-md text-white text-xl hover:ring-4 hover:ring-green-800 hover:ring-opacity-50 transition-all fade-in-out' onClick={() => {
-                                    axios.post('https://www.pradeeps-video-conferencing.store/api/v1/DownloadExcel/', { 'course': router.query.EachCourse, "date": router.query.Date })
+                                    axios.post('http://127.0.0.1:8000/api/v1/DownloadExcel/', { 'course': router.query.EachCourse, "date": router.query.Date })
                                         .then(response => {
                                             const blobUrl = window.URL.createObjectURL(new Blob([response.data]));
 
@@ -114,7 +114,7 @@ export default function EachCourse() {
 }
 
 const fetchCourseWithDateAttendance = async (course, date) => {
-    return axios.get(`https://www.pradeeps-video-conferencing.store/api/v1/GetEachCourseByDate/${course}/${date}`).then((response) => {
+    return axios.get(`http://127.0.0.1:8000/api/v1/GetEachCourseByDate/${course}/${date}`).then((response) => {
         return response.data
     })
 }

@@ -87,7 +87,7 @@ export default function Home() {
 
 const sendPhoto = (formData) => {
 	axios
-		.post("https://www.pradeeps-video-conferencing.store/api/v1/GroupPhotoAPI/", formData)
+		.post("http://127.0.0.1:8000/api/v1/GroupPhotoAPI/", formData)
 		.then((response) => {
 			toast.success('Done')
 			console.log(response);

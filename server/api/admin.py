@@ -4,10 +4,10 @@ from .models import *
 @admin.register(GroupPhoto)
 class GroupPhotoAdmin(admin.ModelAdmin):
     
-    list_display = ['id','image','total_number_of_students','image_preview']
+    list_display = ['id','image','total_number_of_students_identified','image_preview']
 
 
-
+@admin.register(Student)
 class StudentAdmin(admin.ModelAdmin):   
     ordering=['roll_number']
     search_fields=['roll_number','name']
@@ -48,11 +48,9 @@ class StudentAdmin(admin.ModelAdmin):
                     ("course","branch","year",),
                     ("image1", "image1_preview"),
                     ("image2", "image2_preview"),
-                    ("image1_encodings","image2_encodings")
                 )
             },
         ),
     )
 
 
-admin.site.register(Student,StudentAdmin)
