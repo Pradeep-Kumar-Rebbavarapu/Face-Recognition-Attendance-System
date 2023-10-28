@@ -14,17 +14,6 @@ class StudentAdmin(admin.ModelAdmin):
     list_filter = ['branch','year','course']
     readonly_fields = ['image1_preview','image2_preview']
     list_display = ['id','roll_number','name','year','course','branch','image1_preview','image2_preview']
-
-    
-
-    def compute_face_encodings(self, image_path):
-        try:
-            image = face_recognition.load_image_file(image_path)
-            encodings = face_recognition.face_encodings(image)
-            return encodings
-        except Exception as e:
-            print(f"Error computing encodings for {image_path}: {e}")
-            return []
         
 
     def image1_preview(self, obj):

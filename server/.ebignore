@@ -1,0 +1,9 @@
+.git/
+.gitignore
+.vscode/
+.DS_Store
+.elasticbeanstalk/
+logs/
+media/
+venv
+
