@@ -19,7 +19,7 @@ def test_func(self,filename,id):
             
             
             all_students = Student.objects.filter(roll_number__in=identified_people)
-            photo.students_present.set(*all_students)
+            photo.students_present.add(*all_students)
             photo.total_number_of_students_identified = len(identified_people)
             photo.total_number_of_students_present_in_the_photo = total_students
             photo.no_of_unidentified_people = unidentified_people

@@ -35,7 +35,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         id = response['id']
         photo = GroupPhoto.objects.get(id=id)
         all_students = Student.objects.filter(roll_number__in=response['identified_people'])
-        photo.students_present.set(*all_students)
+        photo.students_present.add(*all_students)
         photo.total_number_of_students_identified = response['total_number_of_students_identified']
         photo.total_number_of_students_present_in_the_photo = response['total_number_of_students_identified']
         photo.no_of_unidentified_people = response['no_of_unidentified_people']
