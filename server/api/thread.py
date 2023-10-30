@@ -2,7 +2,7 @@ import threading
 from .models import *
 import face_recognition
 import numpy as np
-
+import json
 
 class CreateStudentsThread(threading.Thread):
     def __init__(self,total,filename,present_students,photo):

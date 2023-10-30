@@ -32,12 +32,13 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['20.212.192.239','localhost','127.0.0.1']
+ALLOWED_HOSTS = ['127.0.0.1','localhost']
 
 
 # Application definition
 
 INSTALLED_APPS = [
+    "daphne",
     "corsheaders",
     'django.contrib.admin',
     'django.contrib.auth',
@@ -47,20 +48,25 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'drf_yasg',
     'api.apps.ApiConfig',
-    "django_celery_results"
+     "django_celery_results",
 ]
-
+WSGI_APPLICATION = 'server.wsgi.application'
+ASGI_APPLICATION = "server.asgi.application"
 MIDDLEWARE = [
     
     'django.middleware.security.SecurityMiddleware',
+    
     "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     "corsheaders.middleware.CorsMiddleware",
     'django.middleware.common.CommonMiddleware',
+    
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    
 ]
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 ROOT_URLCONF = 'server.urls'
@@ -81,7 +87,6 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'server.wsgi.application'
 
 
 # Database
@@ -97,7 +102,14 @@ DATABASES = {
 }
 
 
-
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],
+        },
+    },
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
@@ -145,6 +157,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media/')
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
+CORS_ORIGIN_ALLOW_ALL = True
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 

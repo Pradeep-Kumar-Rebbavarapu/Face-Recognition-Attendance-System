@@ -8,15 +8,55 @@ from rest_framework.views import *
 from rest_framework.response import Response
 from django.http import JsonResponse
 from .serializers import *
-from .tasks import test_func
 import csv
 from django.http import HttpResponse
 import boto3
+from .tasks import test_func
+from django.http import JsonResponse
 # Create your views here.
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
 BASE_DIR = settings.BASE_DIR
 s3 = boto3.resource('s3')
 
+
+
 class GroupPhotoAPI(APIView):
+    def post(self,request):
+        data = request.data
+        print(data)
+        channel_name = data['channel_name']
+        file = request.FILES['file']
+        course = data['course']
+        date = data['date']
+        print('file',file)
+        photo = GroupPhoto.objects.create(
+                image=file,
+                datestamp=getdate(),
+                timestamp=gettime(),
+                total_number_of_students_identified=0,
+                total_number_of_students_present_in_the_photo=0,
+                date = date,
+                course = course,
+                status="In Process"
+        )
+        photo.save()
+        channel_layer = get_channel_layer()
+        print(channel_layer)
+        print(channel_name)
+        async_to_sync(channel_layer.send)(
+            channel_name,
+            {
+                "type": "process",
+                "data": {
+                    "id": photo.id,
+                    "file": photo.image.name
+                }
+            }
+        )
+        return Response({"message":"done"})
+    
+class ProcessImage(APIView):
     def post(self,request):
         data = request.data
         print(data)
@@ -36,8 +76,34 @@ class GroupPhotoAPI(APIView):
         )
         photo.save()
         test_func.delay(file.name,photo.id)
+        return Response("Done")
+
+class SaveGroupPhotoDetails(APIView):
+    def post(self,request):
+        data = request.data
+        identified_people = data['identified_people']
+        total_number_of_students_identified = data['total_number_of_students_identified']
+        total_number_of_students_present_in_the_photo = data['total_number_of_students_present_in_the_photo']
+        no_of_unidentified_people = data['no_of_unidentified_people']
+        accuracy = data['accuracy']
+        total_number_of_students = data['total_number_of_students']
+        id = data['id']
+        all_students = Student.objects.filter(roll_number__in=identified_people)
+        photo = GroupPhoto.objects.get(id=id)
+        photo.students_present.add(*all_students)
+        photo.total_number_of_students_identified = total_number_of_students_identified
+        photo.total_number_of_students_present_in_the_photo = total_number_of_students_present_in_the_photo
+        photo.no_of_unidentified_people = no_of_unidentified_people
+        photo.accuracy = accuracy
+        photo.total_number_of_students = total_number_of_students
+        photo.status = 'Done'
+        photo.save()
+        # data = request.data
+        # add_sum = data['add_sum']
         return Response({'message':'Done'})
         
+
+    
 def send_photo_s3_bucket(photo1,photo2,roll_number1,roll_number2):
     object1 = s3.Object('all-students-facerecog-iiti','index/'+ roll_number1)
     ret1 = object1.put(Body=photo1,Metadata={'FullName':roll_number1[0:11]})

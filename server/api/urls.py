@@ -18,12 +18,15 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
-from .views import GroupPhotoAPI,UploadDetails,getCourseAttendance,GetCoursesByDate,GetEachCourseByDate,GetEachPhotoDetails,DownloadExcel
+from .views import GroupPhotoAPI,UploadDetails,getCourseAttendance,GetCoursesByDate,GetEachCourseByDate,GetEachPhotoDetails,DownloadExcel,SaveGroupPhotoDetails,ProcessImage
+
 
 urlpatterns = [
     path('api/v1/GroupPhotoAPI/',GroupPhotoAPI.as_view()),
     path('api/v1/UploadDetails/',UploadDetails.as_view()),
     path('api/v1/DownloadExcel/',DownloadExcel.as_view()),
+    path('api/v1/SaveGroupPhotoDetails/',SaveGroupPhotoDetails.as_view()),
+    path('api/v1/ProcessImage/',ProcessImage.as_view()),
     path('api/v1/GetCoursesByDate/<str:pk>',GetCoursesByDate.as_view()),
     path('api/v1/getCourseAttendance/<str:pk>',getCourseAttendance.as_view()),
     path('api/v1/GetEachPhotoDetails/<int:id>',GetEachPhotoDetails.as_view()),
