@@ -12,9 +12,10 @@ export default function EachCourseCard({ele,course,date}) {
                 </div>
                 <div className="card-int">
                     <p className="card-int__title">{ele.course}</p>
-                    <p className="excerpt">Total Students Present : {ele.total_number_of_students}</p>
+                    <p className="excerpt">Total Students Present : {ele.total_number_of_students_identified}</p>
                     <p className="excerpt">Course Taken On : {ele.date}</p>
                     <p className="excerpt">Computation Done On : <p>{ele.datestamp} - {ele.timestamp}</p></p>
+                    <p className="excerpt break-all">Accuracy : <span>{ele.accuracy}%</span></p>
                     <p className="excerpt">Status : <span>{ele.status}</span></p>
                     <Link href={`/CoursesPage/${course}/${date}/${ele.id}`}>
                     <button  className="card-int__button">Show</button>

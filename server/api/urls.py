@@ -18,7 +18,7 @@ from django.urls import path,include
 from django.conf.urls.static import static
 from django.conf import settings
 from . import views
-from .views import GroupPhotoAPI,UploadDetails,getCourseAttendance,GetCoursesByDate,GetEachCourseByDate,GetEachPhotoDetails,DownloadExcel,SaveGroupPhotoDetails,ProcessImage
+from .views import GroupPhotoAPI,UploadDetails,getCourseAttendance,GetCoursesByDate,GetEachCourseByDate,GetEachPhotoDetails,DownloadExcel,SaveGroupPhotoDetails,ProcessImage,UploadStudents,test_func_view
 
 
 urlpatterns = [
@@ -30,7 +30,9 @@ urlpatterns = [
     path('api/v1/GetCoursesByDate/<str:pk>',GetCoursesByDate.as_view()),
     path('api/v1/getCourseAttendance/<str:pk>',getCourseAttendance.as_view()),
     path('api/v1/GetEachPhotoDetails/<int:id>',GetEachPhotoDetails.as_view()),
+    path('api/v1/UploadStudents',UploadStudents.as_view()),
     path('api/v1/GetEachCourseByDate/<str:course>/<str:date>',GetEachCourseByDate.as_view()),
+    path('api/v1/test_func/',test_func_view.as_view())
     
     
 ] 

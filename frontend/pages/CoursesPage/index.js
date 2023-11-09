@@ -3,7 +3,7 @@ import React from 'react'
 import { NextSeo } from 'next-seo';
 export default function index() {
   return (
-    <div className=' my-20 grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 mx-5'>
+    <div className='py-32 grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 mx-5'>
       <NextSeo
 				title="IIT INDORE - COURSES"
 				description="IIT INDORE'S ATTENDANCE SYSTEM"

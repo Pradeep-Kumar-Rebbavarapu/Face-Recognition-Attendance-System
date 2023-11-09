@@ -44,15 +44,15 @@ export default function App({ Component, pageProps }) {
 	return (
 		<div >
 			 <QueryClientProvider client={queryClient} >
-			<div className='relative'>
-				<div className='transition-all fade-in-out '>
+			<div className=''>
+				<div className='transition-all fade-in-out'>
 					
 					<Navbar/>
 					
 					
 				</div>
 				
-				<div className='pt-32 lg:pt-20'>
+				<div className=''>
 				<ToastContainer className={"!z-[10000000] invert"}  />
 				<Component {...pageProps} />
 				</div>

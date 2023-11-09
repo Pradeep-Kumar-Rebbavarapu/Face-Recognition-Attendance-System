@@ -32,7 +32,7 @@ SECRET_KEY = env('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['127.0.0.1','localhost']
+ALLOWED_HOSTS = ['127.0.0.1','localhost','.ngrok.io','.ngrok-free.app']
 
 
 # Application definition
@@ -162,7 +162,7 @@ CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOW_CREDENTIALS = True
 
 
-CELERY_BROKER_URL = "redis://127.0.0.1:6379"
+CELERY_BROKER_URL = "redis://127.0.0.1:6379/0"
 CELERY_ACCEPT_CONTENT = ['application/json']
 CELERY_RESULT_SERIALIZER = "json"
 CELERY_TASK_SERIALIZER ="json"
@@ -171,3 +171,5 @@ CELERY_TIMEZOND = "Asia/Kolkata"
 CELERY_RESULT_BACKEND= 'django-db'
 
 DATE_FORMAT = 'd-m-Y'
+
+CSRF_TRUSTED_ORIGINS = ['https://123d-103-159-214-223.ngrok-free.app']

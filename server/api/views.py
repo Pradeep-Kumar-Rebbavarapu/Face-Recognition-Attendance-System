@@ -16,6 +16,7 @@ from django.http import JsonResponse
 # Create your views here.
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
+from django.db import transaction
 BASE_DIR = settings.BASE_DIR
 s3 = boto3.resource('s3')
 
@@ -65,19 +66,27 @@ class ProcessImage(APIView):
         date = data['date']
         print('file',file)
         photo = GroupPhoto.objects.create(
-                image=file,
-                datestamp=getdate(),
-                timestamp=gettime(),
-                total_number_of_students_identified=0,
-                total_number_of_students_present_in_the_photo=0,
-                date = date,
-                course = course,
-                status="In Process"
+            image=file,
+            datestamp=getdate(),
+            timestamp=gettime(),
+            total_number_of_students_identified=0,
+            total_number_of_students_present_in_the_photo=0,
+            date=date,
+            course=course,
+            status="In Process"
         )
         photo.save()
-        test_func.delay(file.name,photo.id)
-        return Response("Done")
-
+        test_func.delay(photo.id)
+        return Response('Done')
+        
+        
+class test_func_view(APIView):
+    def post(self,request):
+        data = request.data
+        id = data['id']
+        test_func.apply_async(args=[id], countdown=3)
+        return Response({'message':'done'})
+    
 class SaveGroupPhotoDetails(APIView):
     def post(self,request):
         data = request.data
@@ -105,9 +114,9 @@ class SaveGroupPhotoDetails(APIView):
 
     
 def send_photo_s3_bucket(photo1,photo2,roll_number1,roll_number2):
-    object1 = s3.Object('all-students-facerecog-iiti','index/'+ roll_number1)
+    object1 = s3.Object('iitistudents','index/'+ roll_number1)
     ret1 = object1.put(Body=photo1,Metadata={'FullName':roll_number1[0:11]})
-    object2 = s3.Object('all-students-facerecog-iiti','index/'+ roll_number2)
+    object2 = s3.Object('iitistudents','index/'+ roll_number2)
     ret2 = object2.put(Body=photo2,Metadata={'FullName':roll_number2[0:11]})
     return True
 
@@ -169,6 +178,7 @@ class GetCoursesByDate(APIView):
             "course":""
         }
         for i in Group_photos:
+            print(i)
             if i.date not in arr:
                 arr.append(i.date)
                 dates.append({
@@ -227,7 +237,7 @@ class GetEachPhotoDetails(APIView):
                 "image": serializer.data.get('image', ''),
                 "students": students_list,
                 "course_taken_on": serializer.data.get('date', ''),
-                "total_students": serializer.data.get('total_number_of_students', ''),
+                "total_students": serializer.data.get('total_number_of_students_identified', ''),
                 "date_of_validation": serializer.data.get('datestamp', ''),
                 "time_of_validation": serializer.data.get('timestamp', ''),
                 "course": serializer.data.get('course', ''),
@@ -245,6 +255,11 @@ class DownloadExcel(APIView):
         course = data['course']
         date = data['date']
         __all__photos__of__the__course__and__date__ = GroupPhoto.objects.filter(date=date).filter(course=course)
+
+        
+
+
+
         __all__students__of__the__class__ = set()
         for photo in __all__photos__of__the__course__and__date__:
             students_present = photo.students_present.all()
@@ -259,7 +274,10 @@ class DownloadExcel(APIView):
                 "branch": i.branch,
                 "year": i.year,
             })
+        test = sorted(test, key=lambda x: x['roll_number'])
 
+        # Print the sorted list
+        print(test)
         # Create a response object with the appropriate content type for CSV
         response = HttpResponse(content_type='text/csv')
         file_name = f"{course}__{date}.csv"
@@ -283,3 +301,13 @@ class DownloadExcel(APIView):
 
 
 
+class UploadStudents(APIView):
+    def get(self,request):
+        image_folder_path = os.path.join(BASE_DIR,'static/student_images')
+        images = os.listdir(image_folder_path)
+        images = [(i,i[0:11]) for i in images]
+        for image in images:
+            file = open(image_folder_path + "/" + image[0],'rb')
+            object = s3.Object('iitistudents','index/'+ image[0])
+            ret = object.put(Body=file,
+                            Metadata={'FullName':image[1]}) 

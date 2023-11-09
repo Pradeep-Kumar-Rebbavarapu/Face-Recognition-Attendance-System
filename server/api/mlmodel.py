@@ -27,7 +27,7 @@ class Attendance:
         print (match['Face']['FaceId'],match['Face']['Confidence'])
             
         face = self.dynamodb.get_item(
-            TableName='facerecognition',  
+            TableName='face_recognition',  
             Key={'RekognitionId': {'S': match['Face']['FaceId']}}
             )
         if 'Item' in face:

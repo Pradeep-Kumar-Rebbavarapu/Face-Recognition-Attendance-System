@@ -30,7 +30,7 @@ export default function EachCourse() {
           
           {(Attendance.isLoading && !Attendance.isError) &&
              (
-              <h1 className="text-white text-center text-3xl my-10">
+              <h1 className="text-white text-center text-3xl py-10">
                 Loading...
               </h1>
             )}
@@ -38,7 +38,7 @@ export default function EachCourse() {
             !Attendance.isLoading &&
             !Attendance.isFetching &&
             Attendance?.data?.data?.length !== 0 && (
-              <h1 className="text-white text-center text-3xl my-10">
+              <h1 className="text-white text-center text-3xl py-10">
                 Some Error Occured
               </h1>
             )}
@@ -46,7 +46,7 @@ export default function EachCourse() {
             !Attendance.isLoading &&
             !Attendance.isFetching &&
             Attendance?.data?.data?.length === 0 && (
-              <h1 className="text-white text-center text-3xl my-10">
+              <h1 className="text-white text-center text-3xl py-10">
                 There Are No Projects Currently
               </h1>
             )}
@@ -54,7 +54,7 @@ export default function EachCourse() {
             !Attendance.isLoading &&
             !Attendance.isFetching &&
             Attendance?.data?.data?.length !== 0 && (
-              <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 py-20">
+              <div className="grid lg:grid-cols-4 sm:grid-cols-2 grid-cols-1 py-32">
                 {Attendance?.data?.data?.map((ele, index) => {
                   return (
                     <React.Fragment key={index}>

@@ -29,7 +29,7 @@ export default function EachCourse() {
 
                 {(DateAttendance.isLoading && !DateAttendance.isError) &&
                     (
-                        <h1 className="text-white text-center text-3xl my-10">
+                        <h1 className="text-white text-center text-3xl py-10">
                             Loading...
                         </h1>
                     )}
@@ -37,7 +37,7 @@ export default function EachCourse() {
                     !DateAttendance.isLoading &&
                     !DateAttendance.isFetching &&
                     DateAttendance?.data?.data?.length !== 0 && (
-                        <h1 className="text-white text-center text-3xl my-10">
+                        <h1 className="text-white text-center text-3xl py-10">
                             Some Error Occured
                         </h1>
                     )}
@@ -45,7 +45,7 @@ export default function EachCourse() {
                     !DateAttendance.isLoading &&
                     !DateAttendance.isFetching &&
                     DateAttendance?.data?.data?.length === 0 && (
-                        <h1 className="text-white text-center text-3xl my-10">
+                        <h1 className="text-white text-center text-3xl py-10">
                             There Are No Projects Currently
                         </h1>
                     )}
@@ -53,7 +53,7 @@ export default function EachCourse() {
                     !DateAttendance.isLoading &&
                     !DateAttendance.isFetching &&
                     DateAttendance?.data?.data?.length !== 0 && (
-                        <div className=''>
+                        <div className='py-32'>
                             <form onSubmit={(e) => e.preventDefault()} className='w-full  flex justify-center flex-col '>
                                 <button type="button" className=' p-3 mx-auto mt-20 bg-green-800 rounded-md text-white text-xl hover:ring-4 hover:ring-green-800 hover:ring-opacity-50 transition-all fade-in-out' onClick={() => {
                                     axios.post('http://127.0.0.1:8000/api/v1/DownloadExcel/', { 'course': router.query.EachCourse, "date": router.query.Date })

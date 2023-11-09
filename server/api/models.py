@@ -1,9 +1,7 @@
+from collections.abc import Iterable
 from django.db import models
 from .helpers import *
 from django.utils.html import mark_safe
-
-
-
 
 # Create your models here.
 def upload_student_image(instance,filename):
@@ -53,6 +51,7 @@ class Student(models.Model):
             )
         return ""
     
+    
 class GroupPhoto(models.Model):
     status_choices = {
         ('In Process','In Process'),
@@ -80,6 +79,7 @@ class GroupPhoto(models.Model):
         return ""
 
 
+    
 
 
 
